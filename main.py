@@ -3,15 +3,19 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-@app.get("/")
-def root():
-    return { "message" : "Hello World" }
-
 class Post(BaseModel):
     title: str
     content: str
+    published: bool = True
+    rating: int | None = None
+
+my_posts: dict[Post] = []
+
+@app.get("/posts")
+def root():
+    return my_posts
 
 @app.post("/posts")
-def create_posts(payload: Post):
-    print(payload)
-    return payload
+def create_posts(post: Post):
+    my_posts.append(post)
+    return post
